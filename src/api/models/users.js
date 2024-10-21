@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ["admin", "user"],
-      default: "user",
+      //default: "user",
     },
   },
   //relación entre colecciones
@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     collection: "users",
   }
 );
-
+//encriptar contraseña
 userSchema.pre("save", function () {
   this.password = bcrypt.hashSync(this.password, 10);//número de saltos que se encripta la contraseña
 })

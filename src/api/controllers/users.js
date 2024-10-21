@@ -1,17 +1,27 @@
 const { generateSign } = require("../../config/jwt");
+const { buscarUsuario } = require("../../utils/buscarUsuario");
 const User = require("../models/users");
 const bcrypt = require("bcrypt");
 
+const getUser = async (req, res, next) => {
+  try {
+    //buscar los usuarios y con .populate() traemos las relaciones
+    const users = await User.find().populate('libreria comicsComprados');
+    return res.status(200).json(users);
+  } catch (error) {
+    return res.status(400).json(error);
+  }
+}
 const register = async (req, res, next) => {
   try {
     const newUser = new User({
       userName: req.body.userName,
       password: req.body.password,
-      rol: "user"
+      rol: "user",
     });
 
     //evitar usuarios duplicados
-    const userDuplicated = await User.findOne({ userName: req.body.userName });
+    const userDuplicated = await buscarUsuario(req.body.userName);
     if (userDuplicated) {
       return res.status(400).json("El nombre de usuario ya existe");
     }
@@ -25,7 +35,7 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const userExist = await User.findOne({ userName: req.body.userName });
+    const userExist = await buscarUsuario(req.body.userName);
 
     if (!userExist) {
       return res.status(400).json("El usuario o contraseña son incorrectos");
@@ -61,16 +71,6 @@ const deleteUser = async (req, res, next) => {
       mensaje: "El usuario ha sido eliminado",
       userDeleted,
     })
-  } catch (error) {
-    return res.status(400).json(error);
-  }
-}
-
-const getUser = async (req, res, next) => {
-  try {
-    //buscar los usuarios y con .populate() traemos las relaciones
-    const users = await User.find().populate('libreria comicsComprados');
-    return res.status(200).json(users);
   } catch (error) {
     return res.status(400).json(error);
   }

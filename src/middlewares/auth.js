@@ -6,10 +6,6 @@ const isAuth = async (req, res, next) => {
     const token = req.headers.authorization;
     const parsedToken = token.replace("Bearer ", "");
 
-    // if (!token) {
-    //   return res.status(400).json("No estás autorizado")
-    // }
-
     const { id } = verifyJwt(parsedToken);
     const user = await User.findById(id);
 
@@ -25,12 +21,8 @@ const isAuth = async (req, res, next) => {
 const isAdmin = async (req, res, next) => {
   try {
     const token = req.headers.authorization;
-
-    // if (!token) {
-    //   return res.status(400).json("No estás autorizado")
-    // }
-
     const parsedToken = token.replace("Bearer ", "");
+
     const { id } = verifyJwt(parsedToken);
     const user = await User.findById(id);
 

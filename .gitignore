@@ -1,0 +1,5 @@
+.git
+.gitattributes
+node_modiles
+package.json
+package-lock.json

@@ -30,18 +30,4 @@ const comicsData = [{
   categoria: "comedia",
 }];
 
-const libreriasData = [{
-  nombre: "Pipa Comics",
-  calle: "Plaza Catalunya, 3",
-  localidad: "Barcelona",
-}, {
-  nombre: "KameHouse",
-  calle: "Avenida Torremolinos, 10",
-  localidad: "Málaga",
-}, {
-  nombre: "Geekkaos",
-  calle: "Ronda Picasso, 30",
-  localidad: "Bilbao",
-}];
-
 module.exports = comicsData, libreriasData;

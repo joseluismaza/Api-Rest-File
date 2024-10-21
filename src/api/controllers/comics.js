@@ -1,3 +1,4 @@
+const { deleteFile } = require("../../utils/deleteFile");
 const Comic = require("../models/comics")
 
 const getComics = async (req, res, next) => {
@@ -41,7 +42,7 @@ const getComicsByCategory = async (req, res, next) => {
 const getComicsByPrice = async (req, res, next) => {
   try {
     const { precio } = req.params;
-    const comics = await Comic.find({ precio: { $lte: precio } });
+    const comics = await Comic.find({ precio: { $lte: precio } }); //lte = less then equal, menor o igual
     return res.status(200).json(comics);
   } catch (error) {
     return res.status(400).json("Error en la solicitud");
@@ -51,10 +52,13 @@ const getComicsByPrice = async (req, res, next) => {
 const postComic = async (req, res, next) => {
   try {
     const newComic = new Comic(req.body);
+    //ruta del archivo de imagen
+    if (req.file) {
+      newComic.imagen = req.file.path;
+    }
 
     // queremos que el juego si lo está creando un usuario normal el campo verified esté obligatoriamente en false
     // cuando lo crea un admin está en true
-
     if (req.user.rol === "admin") {
       newComic.verified = true;
     } else {
@@ -74,6 +78,13 @@ const putComic = async (req, res, next) => {
     const { id } = req.params;
     const newComic = new Comic(req.body);
     newComic._id = id;
+
+    if (req.file) {
+      newComic.imagen = req.file.path;
+      const oldComic = await Comic.findById(id);
+      deleteFile(oldComic.imagen); //eliminar la imagen antigua
+    }
+
     const comicUpdated = await Comic.findByIdAndUpdate(id, newComic, {
       new: true,
     });
@@ -86,7 +97,9 @@ const putComic = async (req, res, next) => {
 const deleteComic = async (req, res, next) => {
   try {
     const { id } = req.params;
+
     const comicDeleted = await Comic.findByIdAndDelete(id);
+    deleteFile(comicDeleted.imagen);//eliminar imagen en cloudinary
     return res.status(200).json(comicDeleted);
   } catch (error) {
     return res.status(400).json("Error en la solicitud");

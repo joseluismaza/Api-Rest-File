@@ -1,3 +1,4 @@
+const { deleteFile } = require("../../utils/deleteFile");
 const Libreria = require("../models/librerias");
 
 
@@ -24,6 +25,9 @@ const getLibreriaById = async (req, res, next) => {
 const postLibrerias = async (req, res, next) => {
   try {
     const newLibreria = new Libreria(req.body);
+    if (req.file) {
+      newLibreria.imagen = req.file.path;
+    }
     const libreriaSaved = await newLibreria.save();
     return res.status(201).json(libreriaSaved);
 
@@ -36,26 +40,32 @@ const postLibrerias = async (req, res, next) => {
 const updateLibrerias = async (req, res, next) => {
   try {
     const { id } = req.params;
+    const oldLirerias = await Libreria.findById(id);
+    const newLibreria = new Libreria(req.body);
+    newLibreria._id = id;
+    const comics = req.body.comics || [];
+    newLibreria.comics = [...oldLirerias.comics, ...comics];
 
-    // Si `req.body.comics` existe , con addtoSet evitamos fuplicados
-    if (req.body.comics) {
-      const libreriaUpdated = await Libreria.findByIdAndUpdate(
-        id,
-        { $addToSet: { comics: { $each: req.body.comics } } }, // Evita duplicados
-        { new: true }
-      );
-      return res.status(200).json(libreriaUpdated);
+    if (req.file) {
+      newLibreria.imagen = req.file.path;
+      deleteFile(oldLirerias.imagen);
     }
-    const libreriaUpdated = await Libreria.findByIdAndUpdate(id, req.body, { new: true, });
-    return res.status(200), json(libreriaUpdated);
+
+    const libreriaUpdated = await Libreria.findByIdAndUpdate(id, newLibreria, {
+      new: true,
+    });
+    return res.status(200).json(libreriaUpdated);
   } catch (error) {
-    return res.status(400).json("No se ha actualizado ninguna librería");
+    console.log(error);
+    return res.status(400).json(error);
   }
 };
+
 const deleteLibrerias = async (req, res, next) => {
   try {
     const { id } = req.params;
     const libreriaDeleted = await Libreria.findByIdAndDelete(id);
+    deleteFile(libreriaDeleted.imagen);
     return res.status(200).json(libreriaDeleted);
   } catch (error) {
     return res.status(400).json("El borrado no ha sido satisfactorio")

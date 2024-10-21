@@ -1,22 +1,25 @@
 const express = require("express");
-const cors = require("cors");
+//const cors = require("cors"); //conexion con el frontend
 require("dotenv").config();
 const { connectDB } = require("./src/config/db");
-const comicsRouter = require("./src/api/routes/comics");
-const libreriaRouter = require("./src/api/routes/librerias");
-const usersRoutes = require("./src/api/routes/users");
+const mainRouter = require("./src/api/routes/main");
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
-connectDB();
+cloudinary.config({
+  cloud_name: process.env.CLOUD_NAME,
+  api_key: process.env.API_KEY,
+  api_secret: process.env.API_SECRET
+});
 
-app.use(cors());
+
+//app.use(cors());
 app.use(express.json());
 
+connectDB();
 //rutas de acceso
-app.use("/api/v1/comics", comicsRouter);
-app.use("/api/v1/librerias", libreriaRouter);
-app.use("/api/v1/users", usersRoutes);
+app.use("/api/v1", mainRouter);
 
 app.use("*", (req, res, next) => {
   return res.status(404).json("Ruta no encontrada")
@@ -25,4 +28,4 @@ app.use("*", (req, res, next) => {
 // levantar servidor
 app.listen(3000, () => {
   console.log("Servidor levantado: http://localhost:3000");
-})
+});
