@@ -1,6 +1,6 @@
-# API REST AUTH para Gestión de Cómics, Librerías y Usuarios.
+# API REST FILE para personalización de Cómics, Librerías y Usuarios.
 
-Este proyecto es una API REST AUTH desarrollada con Node.js, Express, MongoDB que permite gestionar cómics y librerías. Los usuarios pueden realizar operaciones CRUD tanto en la colección de cómics como en la de librerías.
+Este proyecto es una API REST FILE desarrollada con Node.js, Express, MongoDB que permite personalizar cómics y librerías. Los usuarios pueden realizar operaciones CRUD tanto en la colección de cómics como en la de librerías. La mejora implementada ha sido incluir Cloudinary para la gestión de imagenes tanto para las Librerias como para los cómics. 
 
 # Estructura del proyecto
 index.js
@@ -16,6 +16,7 @@ src
       - librerias.js
       - users.js
     - routes
+      - main.js
       - comics.js
       - librerias.js
       - users.js
@@ -28,6 +29,9 @@ src
     - auth.js
   - seeds
     - seed.js
+  - utils
+    - buscarUsuario.js
+    - deleteFile.js
 
 # Instalación
 1. Clonar el respositorio
@@ -66,6 +70,9 @@ DELETE /api/v1/users/:id
 
 # Conexión a la Base de Datos
 El archivo src/config/db.js maneja la conexión a la base de datos MongoDB usando la variable de entorno DB_URL. Asegúrate de tener una insstancia de MongoDb en ejecución o estar conectado a MongoDB Atlas.
+
+# Conexión a Cloudinary
+El archivo index.js maneja la configuración de Cloudinary. 
 
 # Despliegue
 Para desplegar esta API en producción, se recomienda configurar un entorno seguro, gestionar las variables de entorno adecuadamente y usar un servicio de hosting como Heroku o AWS.
