@@ -30,4 +30,4 @@ const comicsData = [{
   categoria: "comedia",
 }];
 
-module.exports = comicsData, libreriasData;
+module.exports = comicsData;
